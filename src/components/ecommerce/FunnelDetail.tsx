@@ -1,27 +1,18 @@
 import styles from '@/components/ecommerce/FunnelDetail.module.css';
+import { FunnelStep } from '@/types/ecommerce/funnel/IFunnelStep';
 
-export interface FunnelDetailProps {
-  color: string;
-  eventLabel: string;
-  eventCount: number;
-  eventCountPrev?: number;
-  eventCountTotal: number;
-  net?: string;
+interface FunnelDetailProps {
+  step: FunnelStep;
 }
 
-export default function FunnelDetail({
-  color,
-  eventLabel,
-  eventCount,
-  eventCountPrev,
-  eventCountTotal,
-  net,
-}: FunnelDetailProps): React.ReactNode {
-  if (eventCountPrev == null) {
-    eventCountPrev = eventCount;
+export function FunnelDetail({ step }: FunnelDetailProps) {
+  let { label, count, previousCount, totalCount, color, netConversion } = step;
+
+  if (previousCount == null) {
+    previousCount = count;
   }
-  const tl = (100 - (eventCountPrev / eventCountTotal) * 100) / 2;
-  const tr = (100 - (eventCount / eventCountTotal) * 100) / 2;
+  const tl = (100 - (previousCount / totalCount) * 100) / 2;
+  const tr = (100 - (count / totalCount) * 100) / 2;
   const bl = 100 - tl;
   const br = 100 - tr;
 
@@ -39,22 +30,20 @@ export default function FunnelDetail({
   return (
     <div className={styles.card}>
       <dl className={styles.textInfo}>
-        <dt>{eventLabel}</dt>
-        <dd style={{ color: color }}>{eventCount.toLocaleString()}</dd>
+        <dt>{label}</dt>
+        <dd style={{ color: color }}>{count.toLocaleString()}</dd>
         <dd style={{ color: color }}>
-          {eventCount === eventCountPrev
+          {count === previousCount
             ? null
-            : `(${((eventCount / eventCountPrev) * 100).toFixed(1)}%)`}
+            : `(${((count / previousCount) * 100).toFixed(1)}%)`}
         </dd>
       </dl>
       <div>
         <div style={funnelPath}></div>
-        <p className={styles.net}>{net != null ? `Net: ${net}%` : null}</p>
+        <p className={styles.net}>
+          {netConversion != null ? `Net: ${netConversion}%` : null}
+        </p>
       </div>
     </div>
   );
-}
-
-{
-  /* <Col span={boxWidth} style={{ borderInline: '1px solid #d9d9d9' }}> */
 }

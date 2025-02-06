@@ -1,17 +1,19 @@
 import styles from '@/components/ecommerce/FunnelDetailsSection.module.css';
+import { FunnelData } from '@/types/ecommerce/funnel/IFunnelData';
+import { FunnelStep } from '@/types/ecommerce/funnel/IFunnelStep';
 import useFetchOnce from '@/utils/client/useFetchOnce';
-import { blue } from '@ant-design/colors';
-import FunnelDetail from './FunnelDetail';
+import { FunnelDetail } from './FunnelDetail';
 
 const FUNNEL_DETAILS_URL = '/api/ecommerce/funnel-details';
+export const FUNNEL_COLORS = {
+  sessions: '#1890ff',
+  productViews: '#40a9ff',
+  checkouts: '#69c0ff',
+  purchases: '#91d5ff',
+} as const;
 
 export default function FunnelDetailsSection(): React.ReactNode {
-  const { isLoading, data } = useFetchOnce<{
-    num_sessions: number;
-    num_product_views: number;
-    num_checkouts: number;
-    num_purchases: number;
-  }>(FUNNEL_DETAILS_URL);
+  const { isLoading, data } = useFetchOnce<FunnelData>(FUNNEL_DETAILS_URL);
 
   const {
     num_sessions = 0,
@@ -20,39 +22,47 @@ export default function FunnelDetailsSection(): React.ReactNode {
     num_purchases = 0,
   } = data ?? {};
 
+  const calculateNetPercentage = (count: number, total: number) =>
+    ((count / total) * 100).toFixed(1);
+
+  const funnelSteps: FunnelStep[] = [
+    {
+      label: 'Sessions',
+      count: num_sessions,
+      totalCount: num_sessions,
+      color: FUNNEL_COLORS.sessions,
+    },
+    {
+      label: 'Product Views',
+      count: num_product_views,
+      previousCount: num_sessions,
+      totalCount: num_sessions,
+      color: FUNNEL_COLORS.productViews,
+    },
+    {
+      label: 'Checkouts',
+      count: num_checkouts,
+      previousCount: num_product_views,
+      totalCount: num_sessions,
+      color: FUNNEL_COLORS.checkouts,
+    },
+    {
+      label: 'Purchases',
+      count: num_purchases,
+      previousCount: num_checkouts,
+      totalCount: num_sessions,
+      color: FUNNEL_COLORS.purchases,
+      netConversion: calculateNetPercentage(num_purchases, num_sessions),
+    },
+  ];
+
   return (
     <section style={{ marginBottom: 48, padding: 16 }}>
       <h2 style={{ fontSize: 24, marginBottom: 16 }}>Funnel Details</h2>
-
       <div className={styles.funnelWrapper}>
-        <FunnelDetail
-          color={blue[7]}
-          eventLabel='Sessions'
-          eventCount={num_sessions}
-          eventCountTotal={num_sessions}
-        />
-        <FunnelDetail
-          color={blue[5]}
-          eventLabel='Product Views'
-          eventCount={num_product_views}
-          eventCountPrev={num_sessions}
-          eventCountTotal={num_sessions}
-        />
-        <FunnelDetail
-          color={blue[4]}
-          eventLabel='Checkouts'
-          eventCount={num_checkouts}
-          eventCountPrev={num_product_views}
-          eventCountTotal={num_sessions}
-        />
-        <FunnelDetail
-          color={blue[3]}
-          eventLabel='Purchases'
-          eventCount={num_purchases}
-          eventCountPrev={num_checkouts}
-          eventCountTotal={num_sessions}
-          net={((num_purchases / num_sessions) * 100).toFixed(1)}
-        />
+        {funnelSteps.map((step) => (
+          <FunnelDetail key={step.label} step={step} />
+        ))}
       </div>
     </section>
   );

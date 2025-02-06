@@ -2,6 +2,7 @@ import styles from '@/components/ecommerce/FunnelDetailsSection.module.css';
 import { FunnelData } from '@/types/ecommerce/funnel/IFunnelData';
 import { FunnelStep } from '@/types/ecommerce/funnel/IFunnelStep';
 import useFetchOnce from '@/utils/client/useFetchOnce';
+import { Card } from 'antd';
 import { FunnelDetail } from './FunnelDetail';
 
 const FUNNEL_DETAILS_URL = '/api/ecommerce/funnel-details';
@@ -15,6 +16,14 @@ export const FUNNEL_COLORS = {
 export default function FunnelDetailsSection(): React.ReactNode {
   const { isLoading, data } = useFetchOnce<FunnelData>(FUNNEL_DETAILS_URL);
 
+  if (isLoading) {
+    return (
+      <section style={{ marginBottom: 48, padding: 16 }}>
+        <h2 style={{ fontSize: 24, marginBottom: 16 }}>Funnel Details</h2>
+        <Card loading={isLoading} />
+      </section>
+    );
+  }
   const {
     num_sessions = 0,
     num_product_views = 0,
@@ -59,9 +68,10 @@ export default function FunnelDetailsSection(): React.ReactNode {
   return (
     <section style={{ marginBottom: 48, padding: 16 }}>
       <h2 style={{ fontSize: 24, marginBottom: 16 }}>Funnel Details</h2>
+
       <div className={styles.funnelWrapper}>
         {funnelSteps.map((step) => (
-          <FunnelDetail key={step.label} step={step} />
+          <FunnelDetail key={step.label} step={step} isLoading={isLoading} />
         ))}
       </div>
     </section>

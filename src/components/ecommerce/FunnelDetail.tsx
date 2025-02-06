@@ -3,9 +3,10 @@ import { FunnelStep } from '@/types/ecommerce/funnel/IFunnelStep';
 
 interface FunnelDetailProps {
   step: FunnelStep;
+  isLoading?: boolean;
 }
 
-export function FunnelDetail({ step }: FunnelDetailProps) {
+export function FunnelDetail({ step, isLoading = false }: FunnelDetailProps) {
   const { label, count, previousCount, totalCount, color, netConversion } =
     step;
   const effectivePreviousCount = previousCount ?? count;

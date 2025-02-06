@@ -1,0 +1,5 @@
+.funnelWrapper {
+  display: flex;
+  flex-direction: row;
+  background-color: #fff;
+}

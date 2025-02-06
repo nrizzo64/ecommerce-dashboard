@@ -71,7 +71,7 @@ export default function FunnelDetailsSection(): React.ReactNode {
 
       <div className={styles.funnelWrapper}>
         {funnelSteps.map((step) => (
-          <FunnelDetail key={step.label} step={step} isLoading={isLoading} />
+          <FunnelDetail key={step.label} step={step} />
         ))}
       </div>
     </section>

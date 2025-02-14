@@ -6,14 +6,15 @@ interface FunnelDetailProps {
 }
 
 export function FunnelDetail({ step }: FunnelDetailProps) {
-  const { label, count, previousCount, totalCount, color, netConversion } =
-    step;
+  const { label, count, previousCount, color, netConversion, maxCount } = step;
   const effectivePreviousCount = previousCount ?? count;
 
   const calculateFunnelPoints = () => {
-    const topLeft = (100 - (effectivePreviousCount / totalCount) * 100) / 2;
-    const topRight = (100 - (count / totalCount) * 100) / 2;
+    // (left) previous funnel value
+    const topLeft = (100 - (effectivePreviousCount / maxCount) * 100) / 2;
     const botLeft = 100 - topLeft;
+    // (right) current funnel value
+    const topRight = (100 - (count / maxCount) * 100) / 2;
     const botRight = 100 - topRight;
 
     return { topLeft, topRight, botLeft, botRight };

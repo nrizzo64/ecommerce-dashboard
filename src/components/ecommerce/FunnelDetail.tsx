@@ -11,20 +11,20 @@ export function FunnelDetail({ step }: FunnelDetailProps) {
   const effectivePreviousCount = previousCount ?? count;
 
   const calculateFunnelPoints = () => {
-    const tl = (100 - (effectivePreviousCount / totalCount) * 100) / 2;
-    const tr = (100 - (count / totalCount) * 100) / 2;
-    const bl = 100 - tl;
-    const br = 100 - tr;
+    const topLeft = (100 - (effectivePreviousCount / totalCount) * 100) / 2;
+    const topRight = (100 - (count / totalCount) * 100) / 2;
+    const botLeft = 100 - topLeft;
+    const botRight = 100 - topRight;
 
-    return { tl, tr, bl, br };
+    return { topLeft, topRight, botLeft, botRight };
   };
 
-  const { tl, tr, bl, br } = calculateFunnelPoints();
+  const { topLeft, topRight, botLeft, botRight } = calculateFunnelPoints();
 
   const funnelPath: React.CSSProperties = {
     width: '100%',
     minHeight: '5rem',
-    clipPath: `polygon(0 ${tl}%, 100% ${tr}%, 100% ${br}%, 0 ${bl}%)`,
+    clipPath: `polygon(0 ${topLeft}%, 100% ${topRight}%, 100% ${botRight}%, 0 ${botLeft}%)`,
     background: color,
   };
 

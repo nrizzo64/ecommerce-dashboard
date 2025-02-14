@@ -4,11 +4,12 @@ import { NextResponse } from 'next/server';
 const commerceUserEventService = new EntityCommerceUserEventService();
 
 export async function GET(): Promise<NextResponse> {
-  const numSessions =
-    await commerceUserEventService.genNumRecentEventByType('session');
-  const numPurchases =
-    await commerceUserEventService.genNumRecentEventByType('purchase');
-  const numDollarRevenue = await commerceUserEventService.genNumRecentRevenue();
+  const [numSessions, numPurchases, numDollarRevenue] = await Promise.all([
+    commerceUserEventService.genNumRecentEventByType('session'),
+    commerceUserEventService.genNumRecentEventByType('purchase'),
+    commerceUserEventService.genNumRecentRevenue(),
+  ]);
+
   return NextResponse.json({
     num_sessions: numSessions,
     num_purchases: numPurchases,
